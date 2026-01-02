@@ -17,16 +17,22 @@ DEEPSEEK_API_KEY=your_deepseek_key
 npm install
 ```
 
-### 3. 启动应用
+### 3. 生产环境部署
 
 ```bash
-./start.sh
+sudo ./start.sh
 ```
 
-### 4. 停止应用
+这会自动：
+- 构建生产版本
+- 更新 Nginx 配置
+- 重新加载 Nginx
+
+### 4. 开发环境运行
 
 ```bash
-./stop.sh
+./start-dev.sh    # 启动开发服务器
+./stop-dev.sh     # 停止开发服务器
 ```
 
 ## 生产环境部署

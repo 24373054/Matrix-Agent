@@ -18,6 +18,11 @@ export default defineConfig(({ mode }) => {
           protocol: 'wss'
         }
       },
+      preview: {
+        port: 3119,
+        host: '0.0.0.0',
+        strictPort: true
+      },
       plugins: [react()],
       define: {
         'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
@@ -27,6 +32,19 @@ export default defineConfig(({ mode }) => {
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
+        }
+      },
+      build: {
+        outDir: 'dist',
+        sourcemap: false,
+        minify: 'esbuild',
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              'react-vendor': ['react', 'react-dom'],
+              'markdown': ['react-markdown', 'remark-gfm', 'rehype-highlight']
+            }
+          }
         }
       }
     };
