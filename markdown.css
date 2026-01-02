@@ -1,0 +1,115 @@
+/* Markdown Rendering Styles */
+
+.prose {
+  color: inherit;
+  max-width: none;
+}
+
+.prose code {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+}
+
+.prose pre {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+.prose pre code {
+  background: transparent;
+  padding: 0;
+  border: none;
+}
+
+/* Code block scrollbar */
+.prose code::-webkit-scrollbar {
+  height: 8px;
+}
+
+.prose code::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.prose code::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.3);
+  border-radius: 4px;
+}
+
+.prose code::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.5);
+}
+
+/* Inline code */
+.prose :not(pre) > code {
+  font-weight: 500;
+}
+
+/* Links */
+.prose a {
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  transition: color 0.2s;
+}
+
+/* Lists */
+.prose ul,
+.prose ol {
+  padding-left: 0;
+}
+
+.prose li {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Tables */
+.prose table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.prose th {
+  font-weight: 600;
+  text-align: left;
+}
+
+/* Blockquotes */
+.prose blockquote {
+  font-style: italic;
+  opacity: 0.9;
+}
+
+/* Headings */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  font-weight: 700;
+  line-height: 1.3;
+  color: inherit;
+}
+
+/* Paragraphs */
+.prose p {
+  line-height: 1.7;
+}
+
+/* Strong/Bold */
+.prose strong {
+  font-weight: 600;
+  color: inherit;
+}
+
+/* Emphasis/Italic */
+.prose em {
+  font-style: italic;
+}
+
+/* Horizontal Rule */
+.prose hr {
+  border-color: rgba(148, 163, 184, 0.2);
+  margin: 1.5rem 0;
+}

@@ -1,0 +1,5 @@
+{
+  "name": "Matrix Agent",
+  "description": "A specialized blockchain forensics AI agent for risk assessment, transaction tracing, and on-chain analysis.",
+  "requestFramePermissions": []
+}
