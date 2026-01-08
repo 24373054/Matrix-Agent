@@ -1,0 +1,6 @@
+Contact: mailto:security@matrixlab.work
+Expires: 2027-01-01T00:00:00.000Z
+Preferred-Languages: en, zh
+Canonical: https://agent.matrixlab.work/.well-known/security.txt
+Policy: https://matrixlab.work/security-policy
+Acknowledgments: https://matrixlab.work/security-acknowledgments

@@ -1,0 +1,18 @@
+/* TEAM */
+Developer: Matrix Lab Team
+Site: https://matrixlab.work
+Location: Global
+
+/* THANKS */
+AI Models: DeepSeek, Google Gemini
+Framework: React, Vite
+Icons: Lucide React
+
+/* SITE */
+Last update: 2026/01/02
+Language: English / 中文 / 日本語
+Doctype: HTML5
+IDE: Visual Studio Code
+Components: React 19, TypeScript 5
+Standards: HTML5, CSS3, ES2024
+Software: Nginx, Node.js
