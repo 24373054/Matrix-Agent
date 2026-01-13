@@ -39,11 +39,14 @@ export default defineConfig(({ mode }) => {
         outDir: 'dist',
         sourcemap: false,
         minify: 'esbuild',
+        target: 'es2020',
+        cssCodeSplit: true,
         rollupOptions: {
           output: {
             manualChunks: {
               'react-vendor': ['react', 'react-dom'],
-              'markdown': ['react-markdown', 'remark-gfm', 'rehype-highlight']
+              'markdown': ['react-markdown', 'remark-gfm', 'rehype-highlight'],
+              'icons': ['lucide-react']
             }
           }
         }

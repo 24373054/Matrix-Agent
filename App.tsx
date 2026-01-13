@@ -3,9 +3,6 @@ import { Menu, Plus, Search, Settings, HelpCircle, User, Send, Paperclip, MoreHo
 import { ChatSession, Message, Role, AnalysisReport } from './types';
 import { sendMessageToGemini, generateMockAnalysis, ModelProvider } from './services/gemini';
 import { AnalysisCard } from './components/AnalysisCard';
-import { DisclaimerModal } from './components/DisclaimerModal';
-import { LoginModal } from './components/LoginModal';
-import { logUserConsent } from './services/consentLogger';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
@@ -767,14 +764,11 @@ const SettingsModal = ({
   );
 };
 
-// 访问流程状态: 'disclaimer' -> 'login' -> 'app'
-type AccessStep = 'disclaimer' | 'login' | 'app';
+interface AppProps {
+  inviteCode?: string | null;
+}
 
-export default function App() {
-  // 访问控制状态 - 每次刷新都从条款开始
-  const [accessStep, setAccessStep] = useState<AccessStep>('disclaimer');
-  const [inviteCode, setInviteCode] = useState<string | null>(null);
-  
+export default function App({ inviteCode }: AppProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [input, setInput] = useState('');
@@ -1022,27 +1016,6 @@ export default function App() {
     setMessages(session.messages);
     if (window.innerWidth < 768) setSidebarOpen(false);
   };
-
-  // 处理协议同意
-  const handleDisclaimerAccept = async () => {
-    await logUserConsent();
-    setAccessStep('login');
-  };
-
-  // 处理登录成功
-  const handleLoginSuccess = (code: string) => {
-    setInviteCode(code);
-    setAccessStep('app');
-  };
-
-  // 访问控制流程: 条款 -> 登录 -> 主应用
-  if (accessStep === 'disclaimer') {
-    return <DisclaimerModal onAccept={handleDisclaimerAccept} />;
-  }
-
-  if (accessStep === 'login') {
-    return <LoginModal onLogin={handleLoginSuccess} />;
-  }
 
   return (
     <div className={`flex h-screen ${s.bgMain} ${s.textMain} overflow-hidden font-sans relative transition-colors duration-300`}>

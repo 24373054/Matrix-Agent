@@ -1,7 +1,33 @@
 import React, { useState, useCallback } from 'react';
-import { Key, AlertTriangle, CheckCircle, Loader2, Shield, Lock } from 'lucide-react';
 
-// 有效邀请码列表 (从服务器文件同步)
+// 内联SVG图标
+const IconKey = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/>
+  </svg>
+);
+const IconAlert = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>
+  </svg>
+);
+const IconCheck = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+  </svg>
+);
+const IconShield = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+  </svg>
+);
+const IconLock = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+  </svg>
+);
+
+// 有效邀请码列表
 const VALID_CODES = [
   "MAT-88FC-36B0-2377", "MAT-2341-5E0E-3A07", "MAT-C290-3ED0-942C", "MAT-99F2-BE1B-E7AE",
   "MAT-D422-5AA6-EC2B", "MAT-145B-185C-BE1D", "MAT-17AD-F5B2-66D0", "MAT-B1CA-EB4A-1416",
@@ -28,22 +54,19 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLogin }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [attempts, setAttempts] = useState(0);
 
-  // 格式化输入 (自动添加连字符)
   const formatCode = (input: string) => {
     const cleaned = input.toUpperCase().replace(/[^A-Z0-9]/g, '');
     const parts = [];
-    
-    if (cleaned.length > 0) parts.push(cleaned.slice(0, 3)); // MAT
-    if (cleaned.length > 3) parts.push(cleaned.slice(3, 7)); // XXXX
-    if (cleaned.length > 7) parts.push(cleaned.slice(7, 11)); // XXXX
-    if (cleaned.length > 11) parts.push(cleaned.slice(11, 15)); // XXXX
-    
+    if (cleaned.length > 0) parts.push(cleaned.slice(0, 3));
+    if (cleaned.length > 3) parts.push(cleaned.slice(3, 7));
+    if (cleaned.length > 7) parts.push(cleaned.slice(7, 11));
+    if (cleaned.length > 11) parts.push(cleaned.slice(11, 15));
     return parts.join('-');
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatCode(e.target.value);
-    if (formatted.length <= 18) { // MAT-XXXX-XXXX-XXXX = 18 chars
+    if (formatted.length <= 18) {
       setCode(formatted);
       setError('');
     }
@@ -51,48 +74,22 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLogin }) => {
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (attempts >= 5) {
-      setError('尝试次数过多，请稍后再试');
-      return;
-    }
-
-    if (!code.trim()) {
-      setError('请输入邀请码');
-      return;
-    }
-
-    if (code.length !== 18) {
-      setError('邀请码格式不正确');
-      setAttempts(prev => prev + 1);
-      return;
-    }
+    if (attempts >= 5) { setError('尝试次数过多，请稍后再试'); return; }
+    if (!code.trim()) { setError('请输入邀请码'); return; }
+    if (code.length !== 18) { setError('邀请码格式不正确'); setAttempts(prev => prev + 1); return; }
 
     setIsLoading(true);
     setError('');
-
-    // 模拟验证延迟
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     if (VALID_CODES.includes(code)) {
-      // 记录登录日志
-      const loginLog = {
-        code: code,
-        timestamp: new Date().toISOString(),
-        user_agent: navigator.userAgent,
-      };
-      console.log('[LOGIN LOG]', JSON.stringify(loginLog, null, 2));
-      
-      // 存储到 sessionStorage (关闭标签页后失效)
+      console.log('[LOGIN]', JSON.stringify({ code, timestamp: new Date().toISOString() }));
       sessionStorage.setItem('matrix_invite_code', code);
-      sessionStorage.setItem('matrix_login_time', new Date().toISOString());
-      
       onLogin(code);
     } else {
       setAttempts(prev => prev + 1);
       setError(`邀请码无效 (${5 - attempts - 1} 次尝试机会)`);
     }
-
     setIsLoading(false);
   }, [code, attempts, onLogin]);
 
@@ -100,30 +97,23 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLogin }) => {
 
   return (
     <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden animate-[scaleIn_0.3s_ease-out]">
-        
-        {/* 头部 */}
+      <div className="w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden">
         <div className="bg-gradient-to-r from-slate-800 to-slate-900 border-b border-slate-700 p-6">
           <div className="flex items-center gap-4">
             <div className="p-3 bg-emerald-500/20 rounded-xl">
-              <Shield className="w-8 h-8 text-emerald-400" />
+              <IconShield className="w-8 h-8 text-emerald-400" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-white">内测访问验证</h1>
-              <p className="text-slate-400 text-sm mt-1">
-                请输入您的专属邀请码
-              </p>
+              <p className="text-slate-400 text-sm mt-1">请输入您的专属邀请码</p>
             </div>
           </div>
         </div>
 
-        {/* 表单 */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          
-          {/* 提示信息 */}
           <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4">
             <div className="flex items-start gap-3">
-              <Lock className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
+              <IconLock className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
               <div className="text-sm text-slate-400">
                 <p>本系统仅对受邀内测用户开放。</p>
                 <p className="mt-1">如需获取邀请码，请联系项目负责人。</p>
@@ -131,77 +121,40 @@ export const LoginModal: React.FC<LoginModalProps> = ({ onLogin }) => {
             </div>
           </div>
 
-          {/* 输入框 */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-300 flex items-center gap-2">
-              <Key className="w-4 h-4" />
-              邀请码
+              <IconKey className="w-4 h-4" />邀请码
             </label>
-            <input
-              type="text"
-              value={code}
-              onChange={handleInputChange}
-              disabled={isLocked || isLoading}
-              placeholder="MAT-XXXX-XXXX-XXXX"
+            <input type="text" value={code} onChange={handleInputChange} disabled={isLocked || isLoading}
+              placeholder="MAT-XXXX-XXXX-XXXX" autoFocus autoComplete="off" spellCheck={false}
               className={`w-full px-4 py-3 bg-slate-800 border rounded-xl text-white text-center font-mono text-lg tracking-wider placeholder-slate-600 focus:outline-none focus:ring-2 transition-all ${
-                error 
-                  ? 'border-red-500 focus:ring-red-500/50' 
-                  : 'border-slate-700 focus:ring-emerald-500/50 focus:border-emerald-500'
-              } ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}`}
-              autoFocus
-              autoComplete="off"
-              spellCheck={false}
-            />
+                error ? 'border-red-500 focus:ring-red-500/50' : 'border-slate-700 focus:ring-emerald-500/50 focus:border-emerald-500'
+              } ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}`} />
           </div>
 
-          {/* 错误提示 */}
           {error && (
             <div className="flex items-center gap-2 text-red-400 text-sm bg-red-950/30 border border-red-500/30 rounded-lg px-4 py-3">
-              <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-              <span>{error}</span>
+              <IconAlert className="w-4 h-4 flex-shrink-0" /><span>{error}</span>
             </div>
           )}
 
-          {/* 锁定提示 */}
           {isLocked && (
             <div className="flex items-center gap-2 text-amber-400 text-sm bg-amber-950/30 border border-amber-500/30 rounded-lg px-4 py-3">
-              <Lock className="w-4 h-4 flex-shrink-0" />
-              <span>账户已临时锁定，请 5 分钟后重试或联系管理员</span>
+              <IconLock className="w-4 h-4 flex-shrink-0" /><span>账户已临时锁定，请 5 分钟后重试</span>
             </div>
           )}
 
-          {/* 提交按钮 */}
-          <button
-            type="submit"
-            disabled={isLocked || isLoading || !code.trim()}
+          <button type="submit" disabled={isLocked || isLoading || !code.trim()}
             className={`w-full py-3 px-6 font-semibold rounded-xl transition-all flex items-center justify-center gap-2 ${
               !isLocked && !isLoading && code.trim()
                 ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white shadow-lg shadow-emerald-500/25'
                 : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700'
-            }`}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                验证中...
-              </>
-            ) : isLocked ? (
-              <>
-                <Lock className="w-5 h-5" />
-                账户已锁定
-              </>
-            ) : (
-              <>
-                <CheckCircle className="w-5 h-5" />
-                验证并进入
-              </>
-            )}
+            }`}>
+            {isLoading ? (<><div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />验证中...</>)
+             : isLocked ? (<><IconLock className="w-5 h-5" />账户已锁定</>)
+             : (<><IconCheck className="w-5 h-5" />验证并进入</>)}
           </button>
-
-          {/* 底部信息 */}
-          <p className="text-center text-xs text-slate-500">
-            邀请码区分大小写 · 每个码仅限一人使用
-          </p>
+          <p className="text-center text-xs text-slate-500">邀请码区分大小写 · 每个码仅限一人使用</p>
         </form>
       </div>
     </div>
